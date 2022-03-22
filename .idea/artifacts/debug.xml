@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="debug">
+    <output-path>$USER_HOME$/Desktop/(1.18) server for plugin testing/plugins</output-path>
+    <root id="archive" name="Enchantingpp.jar">
+      <element id="module-output" name="Enchanting++" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/me/vannername/enchatingplusplus/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/me/vannername/enchatingplusplus/config.yml" />
+    </root>
+  </artifact>
+</component>

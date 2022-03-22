@@ -1,0 +1,9 @@
+name: EnchantingPlusPlus
+version: 2.3
+api-version: 1.13
+author: Vannername
+main: me.vannername.enchatingplusplus.Main
+commands:
+  enchanting:
+    description: Opens the table for Enchanting
+    permission: vanyaplugin.enchanting
