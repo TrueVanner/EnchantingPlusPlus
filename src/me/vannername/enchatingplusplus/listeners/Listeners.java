@@ -31,75 +31,75 @@ public class Listeners implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    static ArrayList<Material> forbidden = new ArrayList<Material>() {
-    };
+    static ArrayList<Material> forbiddenMaterials = new ArrayList<>(){};
+    static ArrayList<Material> forbiddenEntities = new ArrayList<>(){};
 
     static ArrayList<PotionEffectType> forbiddenEff = new ArrayList<>();
 
-    static String part1[] = {"WOODEN", "STONE", "NETHERITE", "DIAMOND", "IRON", "GOLDEN", "CHAINMAIL", "LEATHER"};
-    static String part2[] = {"HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS", "SWORD", "PICKAXE", "AXE", "SHOVEL", "HOE", "INGOT", "BLOCK", "ORE"};
+    static String[] part1 = {"WOODEN", "STONE", "NETHERITE", "DIAMOND", "IRON", "GOLDEN", "CHAINMAIL", "LEATHER"};
+    static String[] part2 = {"HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS", "SWORD", "PICKAXE", "AXE", "SHOVEL", "HOE", "INGOT", "BLOCK", "ORE"};
 
-    static String part3[] = {"COAL", "EMERALD", "COPPER", "REDSTONE", "LAPIS"};
-    static String part4[] = {"", "_BLOCK", "_ORE"};
+    static String[] part3 = {"COAL", "EMERALD", "COPPER", "REDSTONE", "LAPIS"};
+    static String[] part4 = {"", "_BLOCK", "_ORE"};
 
     public static void loadForbidden() {
 
         for (String item : part1) {
             for (String s : part2) {
                 Material buffer = Material.getMaterial(item + "_" + s);
-                if (buffer != null) forbidden.add(buffer);
+                if (buffer != null) forbiddenMaterials.add(buffer);
             }
         }
 
         for (String s : part3) {
             for (String value : part4) {
                 Material buffer = Material.getMaterial(s + value);
-                if (buffer != null) forbidden.add(buffer);
+                if (buffer != null) forbiddenMaterials.add(buffer);
             }
         }
 
-        forbidden.remove(Material.IRON_INGOT);
-        forbidden.remove(Material.EMERALD);
+        forbiddenMaterials.remove(Material.IRON_INGOT);
+        forbiddenMaterials.remove(Material.EMERALD);
 
-        forbidden.add(Material.LAPIS_LAZULI);
-        //forbidden.add(Material.GOLD_INGOT);
-        forbidden.add(Material.GOLD_BLOCK);
-        forbidden.add(Material.GOLD_ORE);
-        //forbidden.add(Material.COPPER_INGOT);
-        forbidden.add(Material.NETHER_GOLD_ORE);
-        forbidden.add(Material.NETHER_QUARTZ_ORE);
+        forbiddenMaterials.add(Material.LAPIS_LAZULI);
+        //forbiddenMaterials.add(Material.GOLD_INGOT);
+        forbiddenMaterials.add(Material.GOLD_BLOCK);
+        forbiddenMaterials.add(Material.GOLD_ORE);
+        //forbiddenMaterials.add(Material.COPPER_INGOT);
+        forbiddenMaterials.add(Material.NETHER_GOLD_ORE);
+        forbiddenMaterials.add(Material.NETHER_QUARTZ_ORE);
 
-        forbidden.add(Material.ICE);
-        forbidden.add(Material.PACKED_ICE);
-        forbidden.add(Material.BLUE_ICE);
-        forbidden.add(Material.CHEST);
-        forbidden.add(Material.BOW);
-        forbidden.add(Material.CROSSBOW);
+        forbiddenMaterials.add(Material.ICE);
+        forbiddenMaterials.add(Material.PACKED_ICE);
+        forbiddenMaterials.add(Material.BLUE_ICE);
+        forbiddenMaterials.add(Material.CHEST);
+        forbiddenMaterials.add(Material.BOW);
+        forbiddenMaterials.add(Material.CROSSBOW);
 
-        forbidden.add(Material.DEEPSLATE_COAL_ORE);
-        forbidden.add(Material.DEEPSLATE_COPPER_ORE);
-        forbidden.add(Material.DEEPSLATE_IRON_ORE);
-        forbidden.add(Material.DEEPSLATE_EMERALD_ORE);
-        forbidden.add(Material.DEEPSLATE_GOLD_ORE);
-        forbidden.add(Material.DEEPSLATE_LAPIS_ORE);
-        forbidden.add(Material.DEEPSLATE_REDSTONE_ORE);
-        forbidden.add(Material.DEEPSLATE_DIAMOND_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_COAL_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_COPPER_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_IRON_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_EMERALD_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_GOLD_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_LAPIS_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_REDSTONE_ORE);
+        forbiddenMaterials.add(Material.DEEPSLATE_DIAMOND_ORE);
 
-        forbidden.add(Material.SHULKER_BOX);
-        forbidden.add(Material.POTION);
-        forbidden.add(Material.SPLASH_POTION);
-        forbidden.add(Material.LINGERING_POTION);
-        //forbidden.add(Material.SHULKER_SHELL);
-        forbidden.add(Material.GOLDEN_APPLE);
-        forbidden.add(Material.ENCHANTED_GOLDEN_APPLE);
-        forbidden.add(Material.TOTEM_OF_UNDYING);
-        forbidden.add(Material.ELYTRA);
-        forbidden.add(Material.PLAYER_HEAD);
-        forbidden.add(Material.BEACON);
-        forbidden.add(Material.NETHER_STAR);
-        forbidden.add(Material.ANCIENT_DEBRIS);
-        forbidden.add(Material.HEART_OF_THE_SEA);
-        forbidden.add(Material.NETHERITE_SCRAP);
+        forbiddenMaterials.add(Material.SHULKER_BOX);
+        forbiddenMaterials.add(Material.POTION);
+        forbiddenMaterials.add(Material.SPLASH_POTION);
+        forbiddenMaterials.add(Material.LINGERING_POTION);
+        //forbiddenMaterials.add(Material.SHULKER_SHELL);
+        forbiddenMaterials.add(Material.GOLDEN_APPLE);
+        forbiddenMaterials.add(Material.ENCHANTED_GOLDEN_APPLE);
+        forbiddenMaterials.add(Material.TOTEM_OF_UNDYING);
+        forbiddenMaterials.add(Material.ELYTRA);
+        forbiddenMaterials.add(Material.PLAYER_HEAD);
+        forbiddenMaterials.add(Material.BEACON);
+        forbiddenMaterials.add(Material.NETHER_STAR);
+        forbiddenMaterials.add(Material.ANCIENT_DEBRIS);
+        forbiddenMaterials.add(Material.HEART_OF_THE_SEA);
+        forbiddenMaterials.add(Material.NETHERITE_SCRAP);
         //--------------------------------------//
         forbiddenEff.add(PotionEffectType.ABSORPTION);
         forbiddenEff.add(PotionEffectType.SATURATION);
@@ -107,7 +107,7 @@ public class Listeners implements Listener {
     }
 
     public static void testForbidden(ConsoleCommandSender c) {
-        for (Material m : forbidden) {
+        for (Material m : forbiddenMaterials) {
             c.sendMessage(m.toString());
 //            p.getWorld().dropItem(p.getLocation(), new ItemStack(m));
         }
@@ -187,14 +187,18 @@ public class Listeners implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         for (Entity n : e.getEntity().getNearbyEntities(10, 4, 10)) {
-            if (n instanceof Player && !(e.getEntity() instanceof Player) && !(e.getEntity() instanceof Villager) && !(e.getEntity() instanceof ArmorStand) && !(e.getEntity() instanceof ItemFrame)) {
+            if (n instanceof Player &&
+                    !(e.getEntity() instanceof Player) &&
+                    !(e.getEntity() instanceof Villager) &&
+                    !(e.getEntity() instanceof ArmorStand) &&
+                    !(e.getEntity() instanceof ItemFrame)) {
                 ItemStack i = ((Player) n).getInventory().getItemInMainHand();
                 if (((Player) n).getInventory().getItemInMainHand().getType() != Material.NETHERITE_SWORD)
                     i = ((Player) n).getInventory().getItemInOffHand();
 
                 if (i.getType() == Material.NETHERITE_SWORD) {
 
-                    if (Objects.requireNonNull(i.getItemMeta()).hasCustomModelData()) {
+                if (Objects.requireNonNull(i.getItemMeta()).hasCustomModelData()) {
                         if (i.getItemMeta().getLore().get(4).contains("on")) {
 
                             n.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
@@ -208,7 +212,8 @@ public class Listeners implements Listener {
                         }
                         if (i.getItemMeta().getCustomModelData() == 5) {
                             for (ItemStack is : e.getDrops()) {
-                                if (!forbidden.contains(is.getType())) is.setAmount(is.getAmount() * 2);
+                                if (!(e.getEntity() instanceof Enderman && ((Enderman) e.getEntity()).getCarriedBlock().getMaterial() == is.getType())) // prevent the doubling of the blocks Enderman is holding
+                                    if (!forbiddenMaterials.contains(is.getType())) is.setAmount(is.getAmount() * 2);
                             }
                         }
                     }
