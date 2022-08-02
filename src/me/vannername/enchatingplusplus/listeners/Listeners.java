@@ -159,15 +159,15 @@ public class Listeners implements Listener {
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         try {
             if (!(e.getEntity() instanceof ArmorStand)) {
-                if (e.getDamager() instanceof Player && Objects.requireNonNull(((Player) e.getDamager()).getInventory().getItemInMainHand().getItemMeta()).hasCustomModelData()) {
-                    if (new PlayerPassive((Player) e.getDamager()).isPassive() || (e.getEntity() instanceof Player && new PlayerPassive((Player) e.getEntity()).isPassive())) {
+                if (e.getDamager() instanceof Player damager && Objects.requireNonNull((damager).getInventory().getItemInMainHand().getItemMeta()).hasCustomModelData()) {
+                    if(e.getEntity() instanceof Player damaged && (new PlayerPassive(damaged).isPassive() || new PlayerPassive(damager).isPassive())) {
                     } else {
-                        int cmd = ((Player) e.getDamager()).getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
+                        int cmd = damager.getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
                         try {
                             LivingEntity entity = (LivingEntity) e.getEntity();
                             if (cmd < 10) {
                                 if (cmd >= 4) {
-                                    ((Player) e.getDamager()).addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 0, false, false, false));
+                                    damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 0, false, false, false));
                                 }
                                 if (cmd >= 3) {
                                     entity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 0, false, false, false));
