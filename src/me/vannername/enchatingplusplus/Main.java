@@ -19,28 +19,18 @@ public class Main extends JavaPlugin {
         saveDefaultConfig();
         //new ItemLocator(this); No longer needed
         Listeners.loadForbidden();
-        //Listeners.testForbidden(getServer().getConsoleSender());
         new Listeners(this);
         new InventoryClickListener(this);
         GUI.init();
 
-
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            for (Player p : getServer().getOnlinePlayers()) {
-                try {
-                    Utils.pickaxeEffect(p);
-                } catch (NullPointerException ignored) {
-                }
-            }
-        }, 0, 60L);
+        // Listeners.testForbidden(getServer().getConsoleSender());
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (!(commandSender instanceof Player)) {
+        if (!(commandSender instanceof Player p)) {
             return false;
         }
-        Player p = (Player) commandSender;
         p.openInventory(GUI.GUI(p));
         return true;
     }

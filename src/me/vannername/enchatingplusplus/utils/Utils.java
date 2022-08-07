@@ -1,11 +1,13 @@
 package me.vannername.enchatingplusplus.utils;
 
 import me.vannername.enchatingplusplus.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -147,13 +149,6 @@ public class Utils {
         }
     }
     */
-    public static void pickaxeEffect(Player p) throws NullPointerException {
-        ItemStack i = p.getInventory().getItemInMainHand();
-        if (i.getItemMeta().hasCustomModelData() && i.getItemMeta().getCustomModelData() == 21) {
-            //Utils.effectCheck(p, new PotionEffect(PotionEffectType.FAST_DIGGING, 40, 0, false, false, true));
-            p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 100, 0, true, true, true));
-        }
-    }
 
     public static ItemStack createItemWithMeta(Inventory inv, Material material, int amount, int invSlot, ItemMeta meta){
         ItemStack item;

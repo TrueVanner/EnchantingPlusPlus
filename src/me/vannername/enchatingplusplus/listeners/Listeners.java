@@ -13,7 +13,9 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
@@ -259,6 +261,27 @@ public class Listeners implements Listener {
                 }
             }
         } catch (NullPointerException ignored) {}
+    }
+
+    private static HashMap<Player, Integer> pick_ids = new HashMap<>();
+
+    @EventHandler
+    public void onMainHandChange(PlayerItemHeldEvent e) {
+        ItemStack i = e.getPlayer().getInventory().getItem(e.getNewSlot());
+
+        try {
+            if (i.getItemMeta().hasCustomModelData() && i.getItemMeta().getCustomModelData() == 21) // only lvl 1+ pickaxe
+                pick_ids.put(e.getPlayer(), Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                    () -> e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 100, 0, true, true, true)),
+                    10L, 60L));
+            else {
+                if(pick_ids.get(e.getPlayer()) != null)
+                    Bukkit.getScheduler().cancelTask(pick_ids.get(e.getPlayer()));
+            }
+        } catch (NullPointerException ex) {
+            if(pick_ids.get(e.getPlayer()) != null)
+                Bukkit.getScheduler().cancelTask(pick_ids.get(e.getPlayer()));
+        }
     }
 
     //    @EventHandler

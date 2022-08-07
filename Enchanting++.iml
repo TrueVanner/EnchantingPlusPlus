@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Desktop/(1.18) server for plugin testing/api/spigot-api-1.18.1-R0.1-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/spigot-api-1.18.2-R0.1-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
