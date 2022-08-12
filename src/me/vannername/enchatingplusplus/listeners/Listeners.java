@@ -38,36 +38,36 @@ public class Listeners implements Listener {
 
     static ArrayList<PotionEffectType> forbiddenEff = new ArrayList<>();
 
-    static String[] part1 = {"WOODEN", "STONE", "NETHERITE", "DIAMOND", "IRON", "GOLDEN", "CHAINMAIL", "LEATHER"};
-    static String[] part2 = {"HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS", "SWORD", "PICKAXE", "AXE", "SHOVEL", "HOE", "INGOT", "BLOCK", "ORE"};
-
-    static String[] part3 = {"COAL", "EMERALD", "COPPER", "REDSTONE", "LAPIS"};
-    static String[] part4 = {"", "_BLOCK", "_ORE"};
+    static String[] part1 = {"NETHERITE", "DIAMOND", "IRON", "GOLD", "COAL", "EMERALD", "COPPER", "REDSTONE", "LAPIS"};
+    static String[] part2 = {"_BLOCK", "_ORE"};
 
     public static void loadForbidden() {
 
-        for (String item : part1) {
-            for (String s : part2) {
-                Material buffer = Material.getMaterial(item + "_" + s);
-                if (buffer != null) forbiddenMaterials.add(buffer);
-            }
-        }
-
-        for (String s : part3) {
-            for (String value : part4) {
+        for (String s : part1) {
+            for (String value : part2) {
                 Material buffer = Material.getMaterial(s + value);
                 if (buffer != null) forbiddenMaterials.add(buffer);
             }
         }
 
-        forbiddenMaterials.remove(Material.IRON_INGOT);
+        for(Material m : Material.values()) {
+            if(m.getMaxStackSize() == 1) forbiddenMaterials.add(m);
+        }
+
+        for(Material m : forbiddenMaterials.toArray(new Material[]{})) {
+            if(m.toString().contains("ORE") && !m.toString().contains("DEEPSLATE")) {
+                Material buffer = Material.getMaterial("DEEPSLATE_" + m);
+                if (buffer != null) forbiddenMaterials.add(buffer);
+            }
+        }
+
         forbiddenMaterials.remove(Material.EMERALD);
+        forbiddenMaterials.remove(Material.DIAMOND);
 
         forbiddenMaterials.add(Material.LAPIS_LAZULI);
-        //forbiddenMaterials.add(Material.GOLD_INGOT);
-        forbiddenMaterials.add(Material.GOLD_BLOCK);
-        forbiddenMaterials.add(Material.GOLD_ORE);
-        //forbiddenMaterials.add(Material.COPPER_INGOT);
+        forbiddenMaterials.add(Material.NETHERITE_INGOT);
+//        forbiddenMaterials.add(Material.GOLD_BLOCK);
+//        forbiddenMaterials.add(Material.GOLD_ORE);
         forbiddenMaterials.add(Material.NETHER_GOLD_ORE);
         forbiddenMaterials.add(Material.NETHER_QUARTZ_ORE);
 
@@ -75,27 +75,9 @@ public class Listeners implements Listener {
         forbiddenMaterials.add(Material.PACKED_ICE);
         forbiddenMaterials.add(Material.BLUE_ICE);
         forbiddenMaterials.add(Material.CHEST);
-        forbiddenMaterials.add(Material.BOW);
-        forbiddenMaterials.add(Material.CROSSBOW);
 
-        forbiddenMaterials.add(Material.DEEPSLATE_COAL_ORE);
-        forbiddenMaterials.add(Material.DEEPSLATE_COPPER_ORE);
-        forbiddenMaterials.add(Material.DEEPSLATE_IRON_ORE);
-        forbiddenMaterials.add(Material.DEEPSLATE_EMERALD_ORE);
-        forbiddenMaterials.add(Material.DEEPSLATE_GOLD_ORE);
-        forbiddenMaterials.add(Material.DEEPSLATE_LAPIS_ORE);
-        forbiddenMaterials.add(Material.DEEPSLATE_REDSTONE_ORE);
-        forbiddenMaterials.add(Material.DEEPSLATE_DIAMOND_ORE);
-
-        forbiddenMaterials.add(Material.SHULKER_BOX);
-        forbiddenMaterials.add(Material.POTION);
-        forbiddenMaterials.add(Material.SPLASH_POTION);
-        forbiddenMaterials.add(Material.LINGERING_POTION);
-        //forbiddenMaterials.add(Material.SHULKER_SHELL);
         forbiddenMaterials.add(Material.GOLDEN_APPLE);
         forbiddenMaterials.add(Material.ENCHANTED_GOLDEN_APPLE);
-        forbiddenMaterials.add(Material.TOTEM_OF_UNDYING);
-        forbiddenMaterials.add(Material.ELYTRA);
         forbiddenMaterials.add(Material.PLAYER_HEAD);
         forbiddenMaterials.add(Material.BEACON);
         forbiddenMaterials.add(Material.NETHER_STAR);
@@ -111,7 +93,7 @@ public class Listeners implements Listener {
     public static void testForbidden(ConsoleCommandSender c) {
         for (Material m : forbiddenMaterials) {
             c.sendMessage(m.toString());
-//            p.getWorld().dropItem(p.getLocation(), new ItemStack(m));
+//            c.getWorld().dropItem(p.getLocation(), new ItemStack(m));
         }
     }
 
@@ -162,6 +144,7 @@ public class Listeners implements Listener {
         try {
             if (!(e.getEntity() instanceof ArmorStand)) {
                 if (e.getDamager() instanceof Player damager && Objects.requireNonNull((damager).getInventory().getItemInMainHand().getItemMeta()).hasCustomModelData()) {
+                    if(e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK || e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
                     if(e.getEntity() instanceof Player damaged && (new PlayerPassive(damaged).isPassive() || new PlayerPassive(damager).isPassive())) {
                     } else {
                         int cmd = damager.getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
@@ -169,13 +152,13 @@ public class Listeners implements Listener {
                             LivingEntity entity = (LivingEntity) e.getEntity();
                             if (cmd < 10) {
                                 if (cmd >= 4) {
-                                    damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 0, false, false, false));
+                                    damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 0, false, false, false));
                                 }
                                 if (cmd >= 3) {
                                     entity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 0, false, false, false));
                                 }
                                 if (cmd >= 2) {
-                                    entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 0, false, false, false));
+                                    entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 0, false, false, false));
                                 }
                             }
                         } catch (ClassCastException ignored) {}

@@ -37,7 +37,7 @@ public class Utils {
                 case 3:
                     return "On kill all drops around you are picked up automatically.";
                 case 4:
-                    return "On hit your enemy gets \"Slowness 1\" for 3 seconds";
+                    return "On hit your enemy gets \"Slowness 1\" for 5 seconds";
                 case 5:
                     return "+4 damage";
                 case 6:
@@ -47,7 +47,7 @@ public class Utils {
                 case 8:
                     return "On hit your enemy also gets \"Wither 1\" for 5 seconds";
                 case 9:
-                    return "On hit you get \"Regeneration 1\" for 3 seconds";
+                    return "On hit you get \"Regeneration 1\" for 1 second";
             }
         }
         else if (type.equals("a")) {

@@ -23,7 +23,7 @@ public class Main extends JavaPlugin {
         new InventoryClickListener(this);
         GUI.init();
 
-        // Listeners.testForbidden(getServer().getConsoleSender());
+//         Listeners.testForbidden(getServer().getConsoleSender());
     }
 
     @Override
