@@ -34,7 +34,7 @@ public class Listeners implements Listener {
     }
 
     static ArrayList<Material> forbiddenMaterials = new ArrayList<>(){};
-    static ArrayList<Material> forbiddenEntities = new ArrayList<>(){};
+//    static ArrayList<Material> forbiddenEntities = new ArrayList<>(){};
 
     static ArrayList<PotionEffectType> forbiddenEff = new ArrayList<>();
 
@@ -212,15 +212,6 @@ public class Listeners implements Listener {
     /*IMPORTANT NOTE!
     * STACKED EFFECT > BEACON > ACHIEVEMENT EFFECT'S DURATIONS > ADDED EFFECTS!
     * */
-    @EventHandler
-    public void onSkullPickup(EntityPickupItemEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
-            if (e.getItem().getItemStack().getType() == Material.WITHER_SKELETON_SKULL) {
-                e.setCancelled(true);
-            }
-        }
-    }
-
 
     PotionEffect pt1, pt2;
 
@@ -246,25 +237,45 @@ public class Listeners implements Listener {
         } catch (NullPointerException ignored) {}
     }
 
+    @EventHandler
+    public void onSkullPickup(EntityPickupItemEvent e) {
+        if (!(e.getEntity() instanceof Player)) {
+            if (e.getItem().getItemStack().getType() == Material.WITHER_SKELETON_SKULL) {
+                e.setCancelled(true);
+            }
+        }
+    }
+
     private static HashMap<Player, Integer> pick_ids = new HashMap<>();
+
+    private void cancelTask(Player p) {
+        if (pick_ids.get(p) != null)
+            Bukkit.getScheduler().cancelTask(pick_ids.get(p));
+    }
 
     @EventHandler
     public void onMainHandChange(PlayerItemHeldEvent e) {
-        ItemStack i = e.getPlayer().getInventory().getItem(e.getNewSlot());
+        cancelTask(e.getPlayer()); // haste repetition cancelled by default to prevent task stacking
 
         try {
-            if (i.getItemMeta().hasCustomModelData() && i.getItemMeta().getCustomModelData() == 21) // only lvl 1+ pickaxe
-                pick_ids.put(e.getPlayer(), Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                    () -> e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 100, 0, true, true, true)),
-                    10L, 60L));
-            else {
-                if(pick_ids.get(e.getPlayer()) != null)
-                    Bukkit.getScheduler().cancelTask(pick_ids.get(e.getPlayer()));
-            }
-        } catch (NullPointerException ex) {
-            if(pick_ids.get(e.getPlayer()) != null)
-                Bukkit.getScheduler().cancelTask(pick_ids.get(e.getPlayer()));
-        }
+            int cmd1 = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
+            if (cmd1 == 21) { // the player is holding a pickaxe that gives Haste
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+
+                    int cmd2 = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
+                    if (cmd1 == cmd2) { // if the player is STILL holding a pick that gives Haste after 10 ticks
+
+                        pick_ids.put(e.getPlayer(), Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                                () -> e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 100, 0, true, true, true)),
+                                0L, 60L));
+                    }
+
+                }, 10L);
+
+            } else
+                cancelTask(e.getPlayer());
+        } catch (NullPointerException | IllegalStateException ignored) {}
     }
 
     //    @EventHandler
