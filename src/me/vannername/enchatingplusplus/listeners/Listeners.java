@@ -258,23 +258,24 @@ public class Listeners implements Listener {
         cancelTask(e.getPlayer()); // haste repetition cancelled by default to prevent task stacking
 
         try {
-            int cmd1 = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
-            if (cmd1 == 21) { // the player is holding a pickaxe that gives Haste
+            // getNewSlot() is used bc getItemInMainHand() is updated AFTER this method runs
+            int cmd1 = e.getPlayer().getInventory().getItem(e.getNewSlot()).getItemMeta().getCustomModelData();
+            if (cmd1 == 21) { // 1+ lvl pick only
 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    try {
+                        int cmd2 = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
+                        if (cmd1 == cmd2) { // check if player's still holding 1+ lvl pick
 
-                    int cmd2 = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getCustomModelData();
-                    if (cmd1 == cmd2) { // if the player is STILL holding a pick that gives Haste after 10 ticks
-
-                        pick_ids.put(e.getPlayer(), Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                                () -> e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 100, 0, true, true, true)),
-                                0L, 60L));
-                    }
+                            pick_ids.put(e.getPlayer(), Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                                    () -> e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 100, 0, true, true, true)),
+                                    0L, 60L));
+                        }
+                    } catch (NullPointerException | IllegalStateException ignored) {}
 
                 }, 10L);
 
-            } else
-                cancelTask(e.getPlayer());
+            }
         } catch (NullPointerException | IllegalStateException ignored) {}
     }
 
