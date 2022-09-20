@@ -47,7 +47,7 @@ public class Utils {
                 case 8:
                     return "On hit your enemy also gets \"Wither 1\" for 5 seconds";
                 case 9:
-                    return "On hit you get \"Regeneration 1\" for 1 second";
+                    return "On kill, you get \"Regeneration 1\" for the duration proportional to the damage you dealt to the enemy (max = 15s)";
             }
         }
         else if (type.equals("a")) {
@@ -88,7 +88,7 @@ public class Utils {
                 case 8:
                     return "Your sword now slowly tears your opponents from the inside!";
                 case 9:
-                    return "Your sword makes you feel strong enough to defeat anyone!";
+                    return "Your sword now steals the health of the enemy!";
             }
         }
         else if (type.equals("a")) {

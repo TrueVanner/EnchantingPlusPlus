@@ -2,18 +2,15 @@ package me.vannername.enchatingplusplus.listeners;
 
 import me.vannername.enchatingplusplus.Main;
 import me.vannername.enchatingplusplus.utils.PlayerPassive;
-import me.vannername.enchatingplusplus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Beacon;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.*;
 
 public class Listeners implements Listener {
@@ -139,10 +135,34 @@ public class Listeners implements Listener {
         }
     }
 
+    class Damages {
+        static Map<Player, HashMap<UUID, Double>> damages = new HashMap<>();
+
+        static void addDamage(Player damager, Entity e, double damage) {
+            if (!damages.containsKey(damager))
+                damages.put(damager, new HashMap<>());
+
+            HashMap<UUID, Double> temp = damages.get(damager);
+            if(!temp.containsKey(e.getUniqueId()))
+                temp.put(e.getUniqueId(), 0D);
+
+            temp.put(e.getUniqueId(), temp.get(e.getUniqueId()) + damage);
+        }
+        static int getDamage(Player p, Entity e) {
+            return damages.get(p).remove(e.getUniqueId()).intValue();
+        }
+
+        static int getRegenDuration(Player p, Entity e) {
+            int base = Damages.getDamage(p, e) / 10;
+            if(base == 0) base = 1;
+            if(base > 15) base = 15;
+            return base*20;
+        }
+    }
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         try {
-            if (!(e.getEntity() instanceof ArmorStand)) {
+            if (isLegalEntity(e.getEntity())) {
                 if (e.getDamager() instanceof Player damager && Objects.requireNonNull((damager).getInventory().getItemInMainHand().getItemMeta()).hasCustomModelData()) {
                     if(e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK || e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
                     if(e.getEntity() instanceof Player damaged && (new PlayerPassive(damaged).isPassive() || new PlayerPassive(damager).isPassive())) {
@@ -151,8 +171,9 @@ public class Listeners implements Listener {
                         try {
                             LivingEntity entity = (LivingEntity) e.getEntity();
                             if (cmd < 10) {
+                                Bukkit.broadcastMessage(String.valueOf(cmd));
                                 if (cmd >= 4) {
-                                    damager.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 0, false, false, false));
+                                    Damages.addDamage(damager, e.getEntity(), e.getDamage());
                                 }
                                 if (cmd >= 3) {
                                     entity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 0, false, false, false));
@@ -169,17 +190,20 @@ public class Listeners implements Listener {
         }
     }
 
+    private static boolean isLegalEntity(Entity e) {
+        return !(e instanceof Player) &&
+                !(e instanceof Villager) &&
+                !(e instanceof ArmorStand) &&
+                !(e instanceof ItemFrame);
+    }
+
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         for (Entity n : e.getEntity().getNearbyEntities(10, 4, 10)) {
-            if (n instanceof Player &&
-                    !(e.getEntity() instanceof Player) &&
-                    !(e.getEntity() instanceof Villager) &&
-                    !(e.getEntity() instanceof ArmorStand) &&
-                    !(e.getEntity() instanceof ItemFrame)) {
-                ItemStack i = ((Player) n).getInventory().getItemInMainHand();
-                if (((Player) n).getInventory().getItemInMainHand().getType() != Material.NETHERITE_SWORD)
-                    i = ((Player) n).getInventory().getItemInOffHand();
+            if (n instanceof Player p && isLegalEntity(e.getEntity())) {
+                ItemStack i = p.getInventory().getItemInMainHand();
+//                if (((Player) n).getInventory().getItemInMainHand().getType() != Material.NETHERITE_SWORD)
+//                    i = ((Player) n).getInventory().getItemInOffHand();
 
                 if (i.getType() == Material.NETHERITE_SWORD) {
 
@@ -201,6 +225,10 @@ public class Listeners implements Listener {
                                     if (!forbiddenMaterials.contains(is.getType())) is.setAmount(is.getAmount() * 2);
                             }
                         }
+
+                        if(i.getItemMeta().getCustomModelData() >= 4)
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Damages.getRegenDuration(p, e.getEntity()), 1, false, true, false));
+
                     }
                 }
                 return;
@@ -298,6 +326,8 @@ public class Listeners implements Listener {
 //            e.getInventory().setItem(slots[n], i);
 //        }
 //    }
+
+
 
 
     //what lies here must not be released into the world ever again...
