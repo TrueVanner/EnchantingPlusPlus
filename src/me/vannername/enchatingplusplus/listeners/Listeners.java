@@ -171,7 +171,6 @@ public class Listeners implements Listener {
                         try {
                             LivingEntity entity = (LivingEntity) e.getEntity();
                             if (cmd < 10) {
-                                Bukkit.broadcastMessage(String.valueOf(cmd));
                                 if (cmd >= 4) {
                                     Damages.addDamage(damager, e.getEntity(), e.getDamage());
                                 }
@@ -221,13 +220,13 @@ public class Listeners implements Listener {
                         }
                         if (i.getItemMeta().getCustomModelData() == 5) {
                             for (ItemStack is : e.getDrops()) {
-                                if (!(e.getEntity() instanceof Enderman && ((Enderman) e.getEntity()).getCarriedBlock().getMaterial() == is.getType())) // prevent the doubling of the blocks Enderman is holding
+                                if (!(e.getEntity() instanceof Enderman && Objects.requireNonNull(((Enderman) e.getEntity()).getCarriedBlock()).getMaterial() == is.getType())) // prevent the doubling of the blocks Enderman is holding
                                     if (!forbiddenMaterials.contains(is.getType())) is.setAmount(is.getAmount() * 2);
                             }
                         }
 
                         if(i.getItemMeta().getCustomModelData() >= 4)
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Damages.getRegenDuration(p, e.getEntity()), 1, false, true, false));
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Damages.getRegenDuration(p, e.getEntity()), 0, false, true, false));
 
                     }
                 }
