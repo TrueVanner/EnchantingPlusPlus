@@ -149,12 +149,15 @@ public class Listeners implements Listener {
             temp.put(e.getUniqueId(), temp.get(e.getUniqueId()) + damage);
         }
         static int getDamage(Player p, Entity e) {
-            return damages.get(p).remove(e.getUniqueId()).intValue();
+            try {
+                return damages.get(p).remove(e.getUniqueId()).intValue();
+            } catch (NullPointerException ex) {
+                return 0;
+            }
         }
 
         static int getRegenDuration(Player p, Entity e) {
             int base = Damages.getDamage(p, e) / 10;
-            if(base == 0) base = 1;
             if(base > 15) base = 15;
             return base*20;
         }
@@ -225,8 +228,12 @@ public class Listeners implements Listener {
                             }
                         }
 
-                        if(i.getItemMeta().getCustomModelData() >= 4)
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Damages.getRegenDuration(p, e.getEntity()), 0, false, true, false));
+                        if(i.getItemMeta().getCustomModelData() >= 4) {
+                            int d = Damages.getRegenDuration(p, e.getEntity());
+                            if(d > 0) {
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, d, 0, false, true, false));
+                            }
+                        }
 
                     }
                 }
